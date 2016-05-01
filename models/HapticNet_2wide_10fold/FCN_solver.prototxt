@@ -1,0 +1,53 @@
+net: "models/HapticNet_2wide_10fold/FCN_train_test.prototxt"
+#net: "label.prototxt"
+
+test_iter: 100
+# make test net, but don't invoke it from the solver itself
+test_interval: 1000000000
+display: 50
+average_loss: 100
+
+##    solver SGD         2-class
+#solver_type: SGD
+#lr_policy: "step"
+#base_lr: 1e-8      # lr for unnormalized softmax -- see train_val definition
+#gamma: 0.3
+#stepsize: 1000
+
+#    solver SGD 	10-class
+# solver_type: SGD
+# lr_policy: "step"
+# base_lr: 1e-8      # lr for unnormalized softmax -- see train_val definition
+# gamma: 0.1
+# stepsize: 5000
+
+#    solver ADAGRAD	10-class
+#solver_type: ADAGRAD
+#lr_policy: "step"
+#base_lr: 1e-5      # lr for unnormalized softmax -- see train_val definition
+#gamma: 0.8
+#stepsize: 2000
+
+##    solver ADAGRAD	69-class
+#solver_type: ADAGRAD
+#lr_policy: "step"
+#base_lr: 5e-6      # lr for unnormalized softmax -- see train_val definition
+#gamma: 0.7
+#stepsize: 140000
+
+solver_type: ADAM
+lr_policy: "step"
+base_lr: 1e-4      # lr for unnormalized softmax -- see train_val definition
+gamma: 0.3
+stepsize: 40000
+
+
+# high momentum
+#momentum: 0.9
+
+# iter_size
+max_iter: 100
+weight_decay: 0.0005
+snapshot: 5000
+snapshot_prefix: "models/HapticNet_2wide_10fold/FCN"
+test_initialization: false

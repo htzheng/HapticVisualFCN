@@ -1,0 +1,23 @@
+net: "models/FusionNet_TCNN_10fold/FusionNet_train_test.prototxt"
+
+test_iter: 100
+# make test net, but don't invoke it from the solver itself
+test_interval: 1000000000
+display: 50
+average_loss: 100
+
+solver_type: ADAM
+lr_policy: "step"
+base_lr: 1e-6      # lr for unnormalized softmax -- see train_val definition
+gamma: 0.1
+stepsize: 100000
+
+# high momentum
+#momentum: 0.9
+
+# iter_size
+max_iter: 100
+weight_decay: 0.0005
+snapshot: 5000
+snapshot_prefix: "models/FusionNet_TCNN_10fold/FCN"
+test_initialization: false

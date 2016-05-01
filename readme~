@@ -1,0 +1,20 @@
+prerequisite
+0. the code is tested under ubuntu14.04
+1. Caffe and matcaffe should be compiled at external/caffe folder.
+2. the pretrained Caffenet should be downloaded and placed at models/VisualNet_10fold.
+3. the TUM material surface dataset (i.e. the "Accel/" folder and "Image_Database/" folder in  file "LMT_TextureDB_1.2.zip") should be unpacked at dataset/TUM.
+
+Usage:
+run startup.m to set path enveriment.
+run caching_haptic.m and caching_image.m to prepare data
+
+run HapticNet_2wide_train_10fold.m to train HapticNet
+run VisualNet_train_10fold.m to train VisualNet
+run FusionNet_train_10fold.m to train FusionNet-FC2
+run FusionNet_69dim_train_10fold to train FusionNet-FC3
+
+run Compare_TCNN_10fold.m to train VisualNet-TCNN
+run FusionNet_TCNN_train_10fold.m to train FusionNet-FC2-TCNN
+run FusionNet_TCNN_train_69_10fold.m to train FusionNet-FC3-TCNN
+
+notice all the training is performed with ten-fold cross validation, so they might be extremely slow.

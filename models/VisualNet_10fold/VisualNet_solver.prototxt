@@ -1,0 +1,37 @@
+net: "models/VisualNet_10fold/VisualNet_train_test.prototxt"
+
+test_iter: 100000000
+# make test net, but don't invoke it from the solver itself
+test_interval: 1000000000
+display: 50
+average_loss: 25
+
+##    solver SGD         2-class
+#solver_type: SGD
+#lr_policy: "step"
+#base_lr: 1e-7      # lr for unnormalized softmax -- see train_val definition
+#gamma: 0.1
+#stepsize: 400000
+
+#    solver ADAGRAD	69-class
+#solver_type: ADAGRAD
+#lr_policy: "step"
+#base_lr: 1e-7      # lr for unnormalized softmax -- see train_val definition
+#gamma: 0.3
+#stepsize: 200000
+
+# high momentum
+#momentum: 0.9
+
+solver_type: ADAM
+lr_policy: "step"
+base_lr: 3e-5      # lr for unnormalized softmax -- see train_val definition
+gamma: 0.75
+stepsize: 40000
+
+# iter_size
+max_iter: 800000
+weight_decay: 0.0005
+snapshot: 5000
+snapshot_prefix: "models/VisualNet_10fold/FCN"
+test_initialization: false

@@ -1,0 +1,72 @@
+name: "fusion_layer"
+
+input: "ip2"
+input_dim: 1
+input_dim: 250
+input_dim: 1
+input_dim: 1000
+
+input: "VisualNet_fc7"
+input_dim: 1
+input_dim: 250
+input_dim: 1
+input_dim: 1000
+
+#####  HapticNet  #######
+
+####### VisualNet ######
+
+# Fusion
+layer {
+  name: "FusionNet_concat"
+  bottom: "ip2"
+  bottom: "VisualNet_fc7"
+  top: "FusionNet_concate"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+}
+
+# fusion layer
+layer {
+  name: "FusionNet_fc"
+  type: "Convolution"
+  bottom: "FusionNet_concate"
+  top: "FusionNet_fc"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 69
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer { 
+  type: "SoftmaxWithLoss" 
+  name: "loss" 
+  top: "loss"
+  bottom: "FusionNet_fc" 
+  bottom: "label"
+  loss_param { 
+    #ignore_label: -1
+    normalize: false 
+  }
+  include {
+    phase: TRAIN
+  }
+}

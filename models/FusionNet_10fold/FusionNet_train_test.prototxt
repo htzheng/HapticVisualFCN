@@ -1,0 +1,597 @@
+name: "FusionNet"
+
+input: "data"
+input_dim: 10
+input_dim: 1
+input_dim: 50
+input_dim: 192
+
+input: "VisualNet_data"
+input_dim: 10
+input_dim: 3
+input_dim: 224
+input_dim: 224
+
+input: "label"
+input_dim: 10
+input_dim: 1
+input_dim: 1
+input_dim: 1
+
+#####  HapticNet  #######
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 50
+    kernel_h: 3
+    kernel_w: 3
+    pad: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+layer {
+  name: "norm1"
+  type: "LRN"
+  bottom: "pool1"
+  top: "norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "norm1"
+  #bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 100
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "pool2"
+  top: "conv3"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 150
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "pool3"
+  type: "Pooling"
+  bottom: "conv3"
+  top: "pool3"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "conv4"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 200
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "conv4"
+  top: "conv4"
+}
+layer {
+  name: "pool4"
+  type: "Pooling"
+  bottom: "conv4"
+  top: "pool4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+
+# full connected
+layer {
+  name: "ip1-t"
+  type: "Convolution"
+  bottom: "pool4"
+  top: "ip1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 400
+    kernel_h: 4
+    kernel_w: 12
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ip1-relu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
+layer {
+  name: "drop1"
+  type: "Dropout"
+  bottom: "ip1"
+  top: "ip1"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+
+layer {
+  name: "ip2-t"
+  type: "Convolution"
+  bottom: "ip1"
+  top: "ip2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 250
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "ip2-relu2"
+  type: "ReLU"
+  bottom: "ip2"
+  top: "ip2"
+}
+
+####### VisualNet ######
+
+layer {
+  name: "VisualNet_conv1"
+  type: "Convolution"
+  bottom: "VisualNet_data"
+  top: "VisualNet_conv1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 1
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 96
+    kernel_size: 11
+    stride: 4
+  }
+}
+layer {
+  name: "VisualNet_relu1"
+  type: "ReLU"
+  bottom: "VisualNet_conv1"
+  top: "VisualNet_conv1"
+}
+layer {
+  name: "VisualNet_pool1"
+  type: "Pooling"
+  bottom: "VisualNet_conv1"
+  top: "VisualNet_pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "VisualNet_norm1"
+  type: "LRN"
+  bottom: "VisualNet_pool1"
+  top: "VisualNet_norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "VisualNet_conv2"
+  type: "Convolution"
+  bottom: "VisualNet_norm1"
+  top: "VisualNet_conv2"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 1
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 256
+    pad: 2
+    kernel_size: 5
+    group: 2
+  }
+}
+layer {
+  name: "VisualNet_relu2"
+  type: "ReLU"
+  bottom: "VisualNet_conv2"
+  top: "VisualNet_conv2"
+}
+layer {
+  name: "VisualNet_pool2"
+  type: "Pooling"
+  bottom: "VisualNet_conv2"
+  top: "VisualNet_pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "VisualNet_norm2"
+  type: "LRN"
+  bottom: "VisualNet_pool2"
+  top: "VisualNet_norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "VisualNet_conv3"
+  type: "Convolution"
+  bottom: "VisualNet_norm2"
+  top: "VisualNet_conv3"
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+  }
+}
+layer {
+  name: "VisualNet_relu3"
+  type: "ReLU"
+  bottom: "VisualNet_conv3"
+  top: "VisualNet_conv3"
+}
+layer {
+  name: "VisualNet_conv4"
+  type: "Convolution"
+  bottom: "VisualNet_conv3"
+  top: "VisualNet_conv4"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 1
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    group: 2
+  }
+}
+layer {
+  name: "VisualNet_relu4"
+  type: "ReLU"
+  bottom: "VisualNet_conv4"
+  top: "VisualNet_conv4"
+}
+layer {
+  name: "VisualNet_conv5"
+  type: "Convolution"
+  bottom: "VisualNet_conv4"
+  top: "VisualNet_conv5"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 1
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    group: 2
+  }
+}
+layer {
+  name: "VisualNet_relu5"
+  type: "ReLU"
+  bottom: "VisualNet_conv5"
+  top: "VisualNet_conv5"
+}
+layer {
+  name: "VisualNet_pool5"
+  type: "Pooling"
+  bottom: "VisualNet_conv5"
+  top: "VisualNet_pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "VisualNet_fc6-c"
+  type: "Convolution"
+  bottom: "VisualNet_pool5"
+  top: "VisualNet_fc6"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 1
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 300
+    kernel_size: 6
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "VisualNet_relu6"
+  type: "ReLU"
+  bottom: "VisualNet_fc6"
+  top: "VisualNet_fc6"
+}
+layer {
+  name: "VisualNet_drop6"
+  type: "Dropout"
+  bottom: "VisualNet_fc6"
+  top: "VisualNet_fc6"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "VisualNet_fc7-c"
+  type: "Convolution"
+  bottom: "VisualNet_fc6"
+  top: "VisualNet_fc7"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 1
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 250
+    kernel_size: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "VisualNet_relu7"
+  type: "ReLU"
+  bottom: "VisualNet_fc7"
+  top: "VisualNet_fc7"
+}
+
+
+# Fusion
+layer {
+  name: "FusionNet_concat"
+  bottom: "ip2"
+  bottom: "VisualNet_fc7"
+  top: "FusionNet_concate"
+  type: "Concat"
+  concat_param {
+    axis: 1
+  }
+  include {
+    phase: TRAIN
+  }
+}
+
+# fusion layer
+layer {
+  name: "FusionNet_fc"
+  type: "Convolution"
+  bottom: "FusionNet_concate"
+  top: "FusionNet_fc"
+  param {
+    lr_mult: 10
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 20
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 69
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+  include {
+    phase: TRAIN
+  }
+}
+
+layer { 
+  type: "SoftmaxWithLoss" 
+  name: "loss" 
+  top: "loss"
+  bottom: "FusionNet_fc" 
+  bottom: "label"
+  loss_param { 
+    #ignore_label: -1
+    normalize: false 
+  }
+  include {
+    phase: TRAIN
+  }
+}
