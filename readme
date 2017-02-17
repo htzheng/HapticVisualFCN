@@ -1,3 +1,5 @@
+The implementation of our TMM paper "Deep Learning for Surface Material Classification Using Haptic and Visual Information"
+
 prerequisite
 0. the code is tested under ubuntu14.04
 1. Caffe and matcaffe should be compiled at external/caffe folder.
